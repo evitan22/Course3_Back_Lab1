@@ -9,7 +9,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const users = []; // тимчасове сховище
 const SECRET_KEY = "secret123";
 
 sequelize.sync({ alter: true }).then(() => {
@@ -46,8 +45,8 @@ app.post("/register", async (req, res) => {
 });
 
 const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 хвилин
-    max: 2, // 5 спроб
+    windowMs: 15 * 60 * 1000, 
+    max: 2, 
     // Цей метод спрацює, коли ліміт буде вичерпано
     handler: (req, res, next, options) => {
     res.status(429).json({ 
@@ -109,8 +108,6 @@ app.patch("/profile/:id", async (req, res) => {
 
   try {
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, SECRET_KEY);
-    const user = await User.findOne({ where: { id } });
     
     await User.update({ ...data }, {where:{id}});
     res.status(201).json({ message: "Користувача оновлено" });
